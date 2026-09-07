@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>供应链维权智能查询工具 - HTML原型</title>
+<style>
+  :root {
+    --blue: #2563eb;
+    --blue-dark: #1d4ed8;
+    --red: #dc2626;
+    --red-dark: #b91c1c;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --yellow: #d97706;
+    --yellow-bg: #fffbeb;
+    --grey: #6b7280;
+    --line: #e5e7eb;
+    --bg: #f3f4f6;
+    --card: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: #1f2937;
+    line-height: 1.7;
+    padding-bottom: 60px;
+  }
+
+  /* ===== 顶部红色固定免责栏 ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(135deg, var(--red-dark), var(--red));
+    color: #fff; font-size: 13px;
+    padding: 8px 16px; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .topbar strong { margin-right: 4px; }
+  .topbar span { display: inline-block; margin: 0 12px; }
+  @media (max-width: 720px){ .topbar span { display: block; margin: 2px 0; } }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+  /* ===== 标题区 ===== */
+  .hero { text-align: center; padding: 44px 16px 28px; }
+  .hero h1 { font-size: 30px; color: var(--blue-dark); letter-spacing: 1px; }
+  .hero .sub { margin-top: 10px; font-size: 15px; color: var(--grey); max-width: 720px; margin-left: auto; margin-right: auto; }
+  .hero .value { margin-top: 14px; display: inline-block; background: #eff6ff; color: var(--blue-dark); border: 1px solid #bfdbfe; border-radius: 999px; padding: 5px 18px; font-size: 13px; font-weight: 600; }
+  .hero .tags { margin-top: 12px; }
+  .hero .tags span { display: inline-block; font-size: 12px; color: var(--grey); background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 3px 10px; margin: 4px 4px; }
+
+  /* ===== 查询区 ===== */
+  .query-card {
+    background: var(--card); border-radius: 12px; padding: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08); border: 1px solid var(--line);
+  }
+  .query-row { display: flex; gap: 10px; }
+  .query-row input {
+    flex: 1; padding: 12px 14px; font-size: 15px; border: 2px solid #d1d5db;
+    border-radius: 8px; outline: none; transition: border-color .2s;
+  }
+  .query-row input:focus { border-color: var(--blue); }
+  .query-row button {
+    padding: 12px 26px; font-size: 15px; font-weight: 600; color: #fff;
+    background: var(--blue); border: none; border-radius: 8px; cursor: pointer;
+    transition: background .2s; white-space: nowrap;
+  }
+  .query-row button:hover { background: var(--blue-dark); }
+  .demo-row { margin-top: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .demo-row .label { font-size: 13px; color: var(--grey); }
+  .demo-btn {
+    font-size: 13px; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    border: 1px solid #bfdbfe; background: #eff6ff; color: var(--blue-dark); transition: all .2s;
+  }
+  .demo-btn:hover { background: #dbeafe; }
+  .demo-btn.b { border-color: #d1d5db; background: #fff; color: var(--grey); }
+  .demo-btn.b:hover { background: #f3f4f6; }
+  .query-hint { margin-top: 10px; font-size: 12px; color: var(--grey); }
+
+  /* ===== 结果区 ===== */
+  #result { margin-top: 22px; scroll-margin-top: 90px; }
+  .result-card {
+    background: var(--card); border-radius: 12px; padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08); border: 1px solid var(--line);
+    animation: fadeUp .45s ease;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  .result-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 18px; }
+  .result-head .company { font-size: 20px; font-weight: 700; }
+  .result-head .actions { margin-left: auto; }
+  .btn-ghost { font-size: 13px; padding: 6px 14px; border-radius: 8px; cursor: pointer; border: 1px solid #d1d5db; background: #fff; color: var(--grey); }
+  .btn-ghost:hover { background: #f3f4f6; }
+
+  .badge { display: inline-block; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+  .badge-grey  { background: #f9fafb; color: var(--grey); border: 1px solid #d1d5db; }
+  .badge-yellow{ background: var(--yellow-bg); color: var(--yellow); border: 1px solid #fde68a; }
+
+  .verdict { background: var(--green-bg); border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #166534; margin-bottom: 20px; }
+  .verdict.yellow { background: var(--yellow-bg); border-color: #fde68a; color: #92400e; }
+  .verdict.grey { background: #f9fafb; border-color: #d1d5db; color: #374151; }
+  .verdict .chips { margin-top: 8px; }
+  .verdict .chip { display: inline-block; font-size: 12px; background: #fff; border: 1px solid #bbf7d0; color: #15803d; border-radius: 6px; padding: 2px 8px; margin: 3px 4px 0 0; }
+  .verdict.yellow .chip { border-color: #fde68a; color: #b45309; }
+
+  h3.sec { font-size: 17px; color: var(--blue-dark); margin: 26px 0 12px; padding-left: 10px; border-left: 4px solid var(--blue); }
+  h3.sec .tag { font-size: 12px; font-weight: 400; color: var(--grey); margin-left: 8px; }
+
+  /* 品牌卡片 */
+  .brand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .brand-card { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fafafa; }
+  .brand-card .name { font-weight: 700; font-size: 14px; }
+  .brand-card .en { font-size: 12px; color: var(--grey); }
+  .brand-card .src { margin-top: 6px; font-size: 12px; color: var(--green); }
+
+  /* 渠道表 */
+  .chan-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .chan-table th { text-align: left; background: #f9fafb; padding: 9px 12px; border: 1px solid var(--line); color: var(--grey); font-weight: 600; }
+  .chan-table td { padding: 9px 12px; border: 1px solid var(--line); vertical-align: top; }
+  .chan-table .mail { font-family: Consolas, monospace; color: var(--blue-dark); word-break: break-all; }
+  .copy-btn {
+    font-size: 12px; padding: 3px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--blue); color: var(--blue); background: #fff; transition: all .2s; white-space: nowrap;
+  }
+  .copy-btn:hover { background: var(--blue); color: #fff; }
+  .copy-btn.ok { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* 证据清单 */
+  .ev-list { list-style: none; }
+  .ev-list li { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; background: #fff; transition: background .15s; }
+  .ev-list li:hover { background: #f9fafb; }
+  .ev-list li.checked { background: #eff6ff; border-color: #bfdbfe; }
+  .ev-list input { accent-color: var(--blue); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+  .ev-list .ev-desc { color: var(--grey); font-size: 12px; margin-left: auto; }
+  .ev-tools { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 13px; color: var(--grey); flex-wrap: wrap; }
+  .ev-count { color: var(--blue-dark); font-weight: 700; }
+
+  /* 模板区 */
+  .tabs { display: flex; gap: 6px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .tab { padding: 8px 18px; cursor: pointer; font-size: 14px; color: var(--grey); border-bottom: 2px solid transparent; }
+  .tab.active { color: var(--blue-dark); font-weight: 600; border-bottom-color: var(--blue); }
+  .tpl-box { position: relative; background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .tpl-box .tpl-copy { position: absolute; top: 10px; right: 10px; }
+  .tpl-box pre { white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: 13.5px; line-height: 1.9; color: #1f2937; }
+  .tpl-note { font-size: 12px; color: var(--grey); margin-top: 8px; }
+
+  /* 模板填写表单 */
+  .form-box { border: 1px dashed #bfdbfe; background: #f8faff; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+  .form-head { font-size: 13.5px; font-weight: 600; color: var(--blue-dark); margin-bottom: 10px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+  .form-grid .fld { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .form-grid .fld textarea { grid-column: 1 / -1; }
+  .form-grid label { font-size: 12.5px; color: var(--grey); }
+  .form-grid input, .form-grid select, .form-grid textarea {
+    padding: 8px 10px; font-size: 13.5px; border: 1px solid #d1d5db; border-radius: 6px;
+    outline: none; background: #fff; font-family: inherit; width: 100%;
+  }
+  .form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus { border-color: var(--blue); }
+  .form-reset { margin-top: 10px; }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+
+  /* 工商信息自动获取条 */
+  .biz-bar { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 18px; }
+  .biz-line { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .biz-line b { color: var(--blue-dark); }
+  .biz-edit { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .biz-edit input { padding: 7px 10px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 6px; flex: 1; min-width: 200px; outline: none; }
+  .biz-edit input:focus { border-color: var(--blue); }
+
+  /* 折叠科普 */
+  details.collapse { border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px; background: #fff; }
+  details.collapse summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 10px 0; color: var(--blue-dark); }
+  details.collapse .body { padding: 4px 0 14px; font-size: 14px; color: #374151; }
+
+  /* 风险提示 */
+  .risk-note { margin-top: 22px; background: var(--yellow-bg); border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #92400e; }
+  .risk-module { margin-top: 22px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 18px 22px; }
+  .risk-module h3 { color: var(--red); font-size: 15px; margin-bottom: 10px; }
+  .risk-module ol { padding-left: 20px; font-size: 13.5px; color: #7f1d1d; }
+  .risk-module li { margin-bottom: 6px; }
+
+  /* 渠道卡片（国内） */
+  .chan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .chan-card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: #fff; }
+  .chan-card .c-name { font-weight: 700; font-size: 15px; color: var(--blue-dark); }
+  .chan-card .c-hotline { margin-top: 4px; font-size: 13px; }
+  .chan-card .c-hotline b { color: var(--red); font-size: 15px; }
+  .chan-card .c-desc { margin-top: 6px; font-size: 12.5px; color: var(--grey); }
+  .chan-card .c-link { margin-top: 8px; font-size: 12.5px; color: #374151; line-height: 1.9; }
+  .chan-card .c-link a { color: var(--blue); text-decoration: none; border-bottom: 1px dashed #93c5fd; }
+  .chan-card .c-link a:hover { color: var(--blue-dark); }
+  .chan-card details { margin-top: 8px; font-size: 12.5px; }
+  .chan-card details summary { cursor: pointer; color: var(--blue); }
+
+  /* 分析步骤 */
+  .steps-card { background: var(--card); border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); border: 1px solid var(--line); margin-top: 22px; }
+  .steps-card h3 { font-size: 16px; color: var(--blue-dark); margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 14px; color: var(--grey); }
+  .step .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #d1d5db; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .step.running .dot { border-color: var(--blue); border-top-color: transparent; animation: spin .8s linear infinite; }
+  .step.done { color: #1f2937; }
+  .step.done .dot { background: var(--green); border-color: var(--green); color: #fff; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .step .st-sub { font-size: 12px; color: var(--grey); margin-left: auto; }
+
+  /* 初始占位 */
+  .placeholder { text-align: center; padding: 40px 20px; color: var(--grey); font-size: 14px; }
+  .placeholder .big { font-size: 40px; margin-bottom: 10px; }
+
+  footer { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 18px; font-size: 12.5px; color: var(--grey); }
+  footer h4 { color: #374151; font-size: 13px; margin: 12px 0 6px; }
+  footer .plan-tag { display: inline-block; border: 1px solid #bfdbfe; color: var(--blue-dark); background: #eff6ff; border-radius: 6px; font-size: 12px; padding: 2px 8px; margin: 2px 4px 2px 0; }
+  .demo-note { margin-top: 10px; font-size: 12px; color: #b45309; background: var(--yellow-bg); border: 1px dashed #fcd34d; border-radius: 8px; padding: 6px 12px; }
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部红色固定免责栏（永久置顶） ===== -->
+<div class="topbar">
+  <strong>⚠️ 免责声明：</strong>
+  <span>本工具不构成法律咨询、不提供法律援助</span>
+  <span>所有数据来自公开互联网，不保证100%完整</span>
+  <span>海外投诉仅为商业施压手段，不能替代国家法定维权渠道</span>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== 标题区 ===== -->
+  <header class="hero">
+    <h1>🔍 供应链维权智能查询工具</h1>
+    <p class="sub">面向职场人、应届生、实习生的 <b>全自动维权渠道智能匹配工具</b>。输入公司名称 → 系统自动挖掘企业供应链、海外客户、出口信息 → 判断是否拥有欧盟/海外品牌供应链 → 智能输出专属维权方案。</p>
+    <div class="value">⭐ 核心价值：把复杂的供应链维权变成傻瓜式一键查询</div>
+    <div class="tags">
+      <span>纯信息检索 + AI 分析</span>
+      <span>不介入司法判定</span>
+      <span>仅整理公开互联网信息</span>
+      <span>不代办维权</span>
+    </div>
+  </header>
+
+  <!-- ===== 查询区 ===== -->
+  <section class="query-card">
+    <div class="query-row">
+      <input id="companyInput" type="text" placeholder="请输入企业名称，如：星宇股份" autocomplete="off">
+      <button id="searchBtn">开始智能分析</button>
+    </div>
+    <div class="demo-row">
+      <span class="label">快捷演示：</span>
+      <button class="demo-btn" data-demo="星宇股份">示例A · 欧盟供应链企业（星宇股份）</button>
+      <button class="demo-btn b" data-demo="宁德时代">示例C · 疑似间接供应链（宁德时代）</button>
+      <button class="demo-btn b" data-demo="某某科技有限公司">示例B · 无海外供应链企业</button>
+    </div>
+    <p class="query-hint">💡 提示：原型内置模拟分析引擎，输入不同公司名可查看三种结果状态；邮箱/渠道均为<b>演示数据</b>。</p>
+  </section>
+
+  <!-- ===== 结果区 ===== -->
+  <div id="result">
+    <div class="result-card" id="placeholderCard">
+      <div class="placeholder">
+        <div class="big">📋</div>
+        输入企业名称并点击「开始智能分析」<br>
+        系统将自动检索公开信息并生成专属维权方案
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 智能风险提示（强制展示） ===== -->
+  <div class="risk-module">
+    <h3>⚠️ 智能风险提示（所有查询结果固定展示）</h3>
+    <ol>
+      <li>本工具仅基于<b>公开网络信息</b>分析，无法获取企业隐秘供应链，结果仅供参考。</li>
+      <li>海外品牌投诉属于<b>商业合规施压</b>，不具备司法效力，不能替代劳动仲裁。</li>
+      <li>最终维权以<b>中国人社、仲裁、法院官方渠道</b>为准。</li>
+    </ol>
+  </div>
+
+  <!-- ===== 底部 ===== -->
+  <footer>
+    <h4>产品定位</h4>
+    <p>纯信息检索 + AI 分析工具。不涉及法律咨询、不介入司法判定、不代办维权，仅整理公开互联网信息，提供维权渠道参考。</p>
+    <h4>数据来源</h4>
+    <p>全网公开新闻 · 官网介绍 · 巨潮资讯年报/招股书 PDF 解析 · 企业公开招标/中标信息 · 海外合作与出口业务报道</p>
+    <h4>版本规划</h4>
+    <div>
+      <span class="plan-tag">V1.0 公司名智能分析</span>
+      <span class="plan-tag">V1.0 欧盟供应链识别</span>
+      <span class="plan-tag">V1.0 海内外双维权方案自动匹配</span>
+      <span class="plan-tag">V1.0 全套模板 + 证据清单</span>
+      <span class="plan-tag">V1.1 IPO 企业 ESG 投诉通道</span>
+      <span class="plan-tag">V1.1 间接供应链 AI 推理</span>
+      <span class="plan-tag">V1.1 海外合规邮箱库自动更新</span>
+    </div>
+    <p style="margin-top:14px;">© 供应链维权智能查询工具 · HTML 交互原型（静态演示，无后端）</p>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+ * 原型模拟数据层（正式产品由后端检索 + 静态白名单库提供）
+ * ============================================================ */
+const BRAND_DB = [
+  { name: '梅赛德斯-奔驰', en: 'Mercedes-Benz', email: 'compliance@mercedes-benz.com', channel: '集团合规举报邮箱' },
+  { name: '大众汽车',     en: 'Volkswagen',    email: 'compliance@volkswagen.de',      channel: '合规与可持续发展部门' },
+  { name: '宝马',         en: 'BMW',            email: 'compliance@bmwgroup.com',        channel: '集团合规举报渠道' },
+  { name: '奥迪',         en: 'Audi',           email: 'compliance@audi.com',            channel: '合规举报邮箱' },
+  { name: '西门子',       en: 'Siemens',        email: 'compliance.office@siemens.com',  channel: '全球合规办公室' },
+];
+
+const MOCK_COMPANIES = {
+  '星宇股份': {
+    state: 'eu',
+    creditCode: '9133020072XXXXXXX1',
+    address: '浙江省宁波市宁海县XX街道XX路1号',
+    brands: [
+      { name: '梅赛德斯-奔驰', en: 'Mercedes-Benz', src: '年报披露：海外营收含欧洲区域' },
+      { name: '大众汽车',     en: 'Volkswagen',    src: '招股书前五大客户披露' },
+      { name: '宝马',         en: 'BMW',            src: '通过 IATF 16949 / 欧盟 ECE 认证' },
+      { name: '奥迪',         en: 'Audi',           src: '产品出口欧洲市场公开报道' },
+      { name: '西门子',       en: 'Siemens',        src: '公开中标/招标信息' },
+    ],
+    chips: ['产品出口欧盟市场', '欧洲车企一级供应商', '海外营收含欧洲区域', '通过欧盟合规认证'],
+  },
+  '宁德时代': {
+    state: 'suspected',
+    creditCode: '91350900MA2XXXXXXX2',
+    address: '福建省宁德市蕉城区XX镇XX路2号',
+    chips: ['大众/宝马/奔驰动力电池供应商（行业报道）', '欧洲建厂公开信息', '未直接披露欧盟客户名单'],
+  },
+};
+
+/* ============================================================
+ * 分析步骤动画
+ * ============================================================ */
+const STEPS = [
+  '检索企业公开信息（官网 / 新闻 / 招标）',
+  '获取企业工商信息（信用代码 / 注册地址）',
+  '解析年报 / 招股书 PDF（巨潮资讯）',
+  'AI 识别欧盟客户与海外供应链',
+  '匹配海外品牌合规白名单库',
+  '生成专属维权方案',
+];
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function runAnalysis(name) {
+  const resultEl = document.getElementById('result');
+  const stepsHtml = STEPS.map((s, i) =>
+    `<div class="step" id="step${i}"><span class="dot"></span>${s}<span class="st-sub"></span></div>`
+  ).join('');
+  resultEl.innerHTML = `<div class="steps-card"><h3>⏳ 正在对「${escapeHtml(name)}」进行智能分析…</h3>${stepsHtml}</div>`;
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  for (let i = 0; i < STEPS.length; i++) {
+    const el = document.getElementById('step' + i);
+    if (!el) return;
+    el.classList.add('running');
+    el.querySelector('.st-sub').textContent = '分析中…';
+    await sleep(420);
+    el.classList.remove('running');
+    el.classList.add('done');
+    el.querySelector('.dot').textContent = '✓';
+    el.querySelector('.st-sub').textContent = '';
+  }
+  await sleep(200);
+
+  const info = MOCK_COMPANIES[name] || { state: 'domestic' };
+  currentCompany = name;
+  initTplState();
+  if (lastBizCompany !== name) {
+    const biz = getBizInfo(name);
+    setBizFields(biz ? biz.creditCode : '', biz ? biz.address : '');
+    lastBizCompany = name;
+  }
+  resultEl.innerHTML = renderResult(name, info);
+  initTplSections();
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ============================================================
+ * 结果渲染
+ * ============================================================ */
+function renderResult(name, info) {
+  const head = `
+    <div class="result-head">
+      <span class="badge badge-${info.state === 'eu' ? 'green' : info.state === 'suspected' ? 'yellow' : 'grey'}">
+        ${info.state === 'eu' ? '✅ 检测到欧盟/海外供应链' : info.state === 'suspected' ? '⚠️ 疑似间接供应链' : 'ℹ️ 未检测到公开海外供应链'}
+      </span>
+      <span class="company">${escapeHtml(name)}</span>
+      <span class="actions"><button class="btn-ghost" onclick="resetQuery()">↺ 重新查询</button></span>
+    </div>`;
+
+  let body = '';
+  if (info.state === 'eu') body = renderEu(name, info);
+  else if (info.state === 'suspected') body = renderSuspected(name, info);
+  else body = renderDomestic(name);
+
+  return `<div class="result-card">${head}${body}</div>
+    <div class="demo-note">⚠️ 原型演示提示：以上企业分析结论、品牌匹配、邮箱与渠道均为<b>模拟演示数据</b>，仅用于展示产品形态，不代表真实检索结果；正式产品由后端自动检索 + 预录入白名单库提供。</div>`;
+}
+
+/* ---------- 状态A：欧盟供应链（高端维权模式） ---------- */
+function renderEu(name, info) {
+  const brands = info.brands.map(b => `
+    <div class="brand-card">
+      <div class="name">${b.name}</div>
+      <div class="en">${b.en}</div>
+      <div class="src">📌 匹配来源：${b.src}</div>
+    </div>`).join('');
+
+  const rows = BRAND_DB.map(b => `
+    <tr>
+      <td><b>${b.name}</b> <span style="color:#6b7280;font-size:12px">${b.en}</span></td>
+      <td>${b.channel}</td>
+      <td class="mail">${b.email}</td>
+      <td><button class="copy-btn" data-copy="${b.email}">复制</button></td>
+    </tr>`).join('');
+
+  const evList = [
+    ['劳动合同及续签/变更协议', '证明劳动关系与岗位'],
+    ['工资银行流水 + 个税记录', '证明工资标准与发放'],
+    ['考勤打卡 / 排班记录', '证明出勤与工时'],
+    ['解除/调岗/降薪通知文书', '证明违规处理行为'],
+    ['钉钉/微信/邮件聊天记录', '证明沟通与施压过程'],
+    ['录音录像（合规取证）', '证明谈话与现场事实'],
+    ['加班记录与加班费明细', '证明超时用工'],
+    ['绩效考核与岗位材料', '证明考核合理性'],
+    ['企业年报/招股书截图', '证明欧洲客户与海外营收'],
+    ['欧盟品牌合作公开资料', '支撑供应链尽职调查请求'],
+  ].map(([t, d]) => evItem(t, d)).join('');
+
+  return `
+    <div class="verdict">
+      <b>供应链检测结果：已匹配到该企业存在欧盟/海外品牌供应链。</b>
+      <div class="chips">${info.chips.map(c => `<span class="chip">${c}</span>`).join('')}</div>
+    </div>
+    <div id="bizBar"></div>
+
+    <h3 class="sec">一、合作海外客户名单（已匹配合规白名单库）</h3>
+    <div class="brand-grid">${brands}</div>
+
+    <h3 class="sec">二、对应品牌供应链合规投诉渠道 <span class="tag">演示数据 · 正式产品自动匹配</span></h3>
+    <table class="chan-table">
+      <tr><th>品牌</th><th>渠道类型</th><th>投诉邮箱</th><th></th></tr>
+      ${rows}
+    </table>
+    <p class="tpl-note">※ 正式产品中该库（奔驰/宝马/大众/奥迪/保时捷/西门子/博世/飞利浦等欧盟企业）会持续维护更新。</p>
+
+    <h3 class="sec">三、CSDDD 适配证据清单 <span class="tag">可勾选整理，一键复制</span></h3>
+    <div class="ev-tools">
+      <button class="btn-ghost" onclick="toggleAll(true)">全选</button>
+      <button class="btn-ghost" onclick="toggleAll(false)">取消全选</button>
+      <span>已选 <span class="ev-count" id="evCountA">0</span> 项</span>
+      <button class="copy-btn" onclick="copyEvList('evListA')">复制已选清单</button>
+    </div>
+    <ul class="ev-list" id="evListA">${evList}</ul>
+    <p class="tpl-note">※ 适配欧盟《企业可持续发展尽职调查指令》(CSDDD) 供应链投诉场景：证据应能证明劳动关系 + 违规事实 + 企业与欧盟客户的供应关系。</p>
+
+    <h3 class="sec">四、中英双语投诉邮件模板 <span class="tag">填写表单自动同步，一键复制</span></h3>
+    ${tplSectionHtml([
+      { label: '中文版', key: 'eu', lang: 'zh' },
+      { label: 'English Version', key: 'eu', lang: 'en' },
+    ], 'eu')}
+
+    <h3 class="sec">五、维权原理科普 <span class="tag">为什么投诉海外客户有用</span></h3>
+    <details class="collapse">
+      <summary>👁 点击展开：海外供应链合规施压的原理</summary>
+      <div class="body">
+        <p><b>1. 法律依据：</b>欧盟《企业可持续发展尽职调查指令》(CSDDD) 要求大型企业对其整个供应链的环境与人权影响进行尽职调查，供应商的劳工违规会直接传导为客户的合规风险。</p>
+        <p><b>2. 商业约束：</b>欧洲车企/品牌对供应商有严格的《供应商行为准则》与审核机制。收到供应链劳工投诉后，客户通常会启动调查，违规供应商面临整改、扣款甚至被移出供应体系的风险。</p>
+        <p><b>3. 传导路径：</b>员工投诉 → 客户合规部门启动供应链调查 → 供应商面临订单/评级/IPO 压力 → 主动与员工和解。这正是"星宇股份式"高端维权策略的底层逻辑：<b>借力企业最在意的海外订单与合规声誉</b>。</p>
+        <p style="color:#92400e;margin-top:6px;">⚠️ 注意：该方式属于商业合规施压，不具备司法效力，不能替代劳动仲裁等法定渠道。</p>
+      </div>
+    </details>
+
+    <div class="risk-note">⚠️ <b>风险提示：</b>海外品牌投诉属于商业合规施压，不具备司法效力，不能替代国内劳动仲裁；投诉内容须真实有据，禁止用于恶意诬告、恶意抹黑企业，用户自行承担使用责任。</div>
+  `;
+}
+
+/* ---------- 状态C：疑似间接供应链 ---------- */
+function renderSuspected(name, info) {
+  return `
+    <div class="verdict yellow">
+      <b>未直接确认该企业与欧盟品牌的直接供应关系，但检索到疑似间接供应链线索。</b>
+      <div class="chips">${info.chips.map(c => `<span class="chip">${c}</span>`).join('')}</div>
+    </div>
+    <p style="font-size:14px;margin-bottom:14px;">建议采用 <b>双线维权策略</b>：在发起国内官方维权的同时，可结合疑似海外供应链线索尝试品牌方合规施压，提升和解概率（间接供应链投诉命中率较低，需先通过公开资料进一步核实供应关系）。</p>
+    <h3 class="sec">建议动作</h3>
+    <ul style="font-size:14px;padding-left:20px;">
+      <li>📋 优先走国内官方渠道（12333 / 劳动仲裁 / 12345）—— 具备强制力；</li>
+      <li>🔍 通过年报、招股书、海关出口数据进一步核实海外客户；</li>
+      <li>✉️ 核实后，可参考下方"国内方案"证据清单与模板发起投诉。</li>
+    </ul>
+    <div class="risk-note">⚠️ <b>风险提示：</b>疑似供应链未经证实，直接向品牌投诉可能无效；请勿虚构供应关系进行投诉，否则可能构成诬告。</div>
+  `;
+}
+
+/* ---------- 状态B：无海外供应链（普通维权模式） ---------- */
+function renderDomestic(name) {
+  const evList = [
+    ['劳动合同及续签/变更协议', '证明劳动关系'],
+    ['工资银行流水 + 个税记录', '证明工资标准与拖欠'],
+    ['考勤打卡 / 排班记录', '证明出勤与工时'],
+    ['解除/调岗/降薪通知文书', '证明违规处理行为'],
+    ['钉钉/微信/邮件聊天记录', '证明沟通与施压过程'],
+    ['录音录像（合规取证）', '证明谈话与现场事实'],
+    ['加班记录与加班费明细', '证明超时用工'],
+    ['社保缴纳记录', '证明未依法缴纳情况'],
+    ['工牌/办公系统/工作群截图', '证明任职身份'],
+    ['证人姓名与联系方式', '备查佐证'],
+  ].map(([t, d]) => evItem(t, d)).join('');
+
+  return `
+    <div class="verdict grey">
+      <b>全网未检索到「${escapeHtml(name)}」的欧洲客户、出口或海外合作公开信息，已为您匹配国内官方维权方案。</b>
+    </div>
+    <div id="bizBar"></div>
+
+    <h3 class="sec">一、国内官方维权渠道</h3>
+    <div class="chan-grid">
+      <div class="chan-card">
+        <div class="c-name">📞 12333 劳动监察投诉</div>
+        <div class="c-hotline">热线：<b>12333</b></div>
+        <div class="c-desc">对违法用工、恶意裁员、欠薪等行为进行行政监察查处，全程免费。</div>
+        <div class="c-link">🖥 在线入口：<a href="https://www.12333.gov.cn" target="_blank" rel="noopener">www.12333.gov.cn 全国人社政务服务平台</a> · <a href="https://www.mohrss.gov.cn" target="_blank" rel="noopener">www.mohrss.gov.cn 人社部</a></div>
+        <details><summary>怎么用？</summary>拨打 12333 或通过当地人社局官网/小程序在线投诉，说明单位名称、违法事实，附证据材料。</details>
+      </div>
+      <div class="chan-card">
+        <div class="c-name">⚖️ 劳动仲裁申请</div>
+        <div class="c-hotline">时效：劳动关系终止后 <b>1 年内</b></div>
+        <div class="c-desc">对违法解除、欠薪、调岗等争议申请仲裁，免费，具有法律强制力。</div>
+        <div class="c-link">🖥 在线入口：当地人社局官网 / 政务App（如浙里办、随申办）搜索「劳动仲裁」栏目；也可通过 <a href="https://www.12333.gov.cn" target="_blank" rel="noopener">www.12333.gov.cn</a> 查找当地服务</div>
+        <details><summary>怎么用？</summary>向劳动合同履行地或单位所在地仲裁委提交申请书 + 证据 → 受理 → 开庭 → 裁决（45日内）。</details>
+      </div>
+      <div class="chan-card">
+        <div class="c-name">🏛 12345 政务服务热线</div>
+        <div class="c-hotline">热线：<b>12345</b></div>
+        <div class="c-desc">通用政务投诉渠道，可督办转办，适合多渠道施压。</div>
+        <div class="c-link">🖥 在线入口：当地政府门户网站「12345」专栏（如 <a href="https://www.beijing.gov.cn" target="_blank" rel="noopener">www.beijing.gov.cn</a>）；全国政务入口：<a href="https://www.gov.cn" target="_blank" rel="noopener">www.gov.cn 中国政府网</a></div>
+        <details><summary>怎么用？</summary>电话/小程序/App 均可，提交投诉工单，跟进办理进度与回访。</details>
+      </div>
+      <div class="chan-card">
+        <div class="c-name">🔍 国企/上市公司监管渠道</div>
+        <div class="c-hotline">纪检 · 证监会 <b>12386</b> · 国资委信访</div>
+        <div class="c-desc">国企可向纪检监察组/国资委信访投诉；上市公司可向证监会 12386 反映治理与用工问题。</div>
+        <div class="c-link">🖥 在线入口：<a href="https://www.12388.gov.cn" target="_blank" rel="noopener">www.12388.gov.cn 中央纪委举报网站</a> · <a href="https://www.csrc.gov.cn" target="_blank" rel="noopener">www.csrc.gov.cn 证监会</a> · <a href="https://www.sasac.gov.cn" target="_blank" rel="noopener">www.sasac.gov.cn 国资委</a> · <a href="https://www.gjxfj.gov.cn" target="_blank" rel="noopener">www.gjxfj.gov.cn 国家信访局</a></div>
+        <details><summary>怎么用？</summary>按单位性质选择对应监管机构，实名投诉，注明用工违规事实与诉求。</details>
+      </div>
+    </div>
+
+    <h3 class="sec">二、国内维权必备证据清单 <span class="tag">可勾选整理，一键复制</span></h3>
+    <div class="ev-tools">
+      <button class="btn-ghost" onclick="toggleAll(true)">全选</button>
+      <button class="btn-ghost" onclick="toggleAll(false)">取消全选</button>
+      <span>已选 <span class="ev-count" id="evCountB">0</span> 项</span>
+      <button class="copy-btn" onclick="copyEvList('evListB')">复制已选清单</button>
+    </div>
+    <ul class="ev-list" id="evListB">${evList}</ul>
+
+    <h3 class="sec">三、可复制投诉文书模板 <span class="tag">填写表单自动同步，一键复制</span></h3>
+    ${tplSectionHtml([
+      { label: '12333/12345 投诉模板', key: 'domestic', lang: 'zh' },
+      { label: '劳动仲裁申请书模板', key: 'arb', lang: 'zh' },
+    ], 'domestic')}
+
+    <div class="risk-note">⚠️ <b>风险提示：</b>请优先通过 12333 / 劳动仲裁 / 12345 等官方渠道维权，投诉内容须真实有据，禁止恶意诬告、恶意抹黑企业，用户自行承担使用责任。</div>
+  `;
+}
+
+/* ---------- 证据清单条目 ---------- */
+function evItem(title, desc) {
+  return `<li onclick="toggleEv(this)">
+    <input type="checkbox" onclick="event.stopPropagation()">
+    <span>${title}</span>
+    <span class="ev-desc">${desc}</span>
+  </li>`;
+}
+
+/* ============================================================
+ * 模板内容（演示文本，正式产品由内容库提供）
+ * ============================================================ */
+/* 模板定义：{{字段}} 为占位符，由"填写表单"实时替换（未填写时显示 zh/en 兜底文案） */
+
+/* 违规事实类型：中英双语选项（中文模板填中文、英文模板填英文） */
+const VIOLATION_OPTS = [
+  { id: 'dismissal', zh: '无故辞退', en: 'Unlawful dismissal' },
+  { id: 'forced',    zh: '逼迫自离', en: 'Forced resignation' },
+  { id: 'transfer',  zh: '违法调岗', en: 'Illegal job transfer' },
+  { id: 'wage',      zh: '拖欠工资', en: 'Wage arrears' },
+  { id: 'overtime',  zh: '超时加班', en: 'Excessive overtime' },
+  { id: 'social',    zh: '未依法缴纳社保', en: 'Non-payment of social insurance' },
+];
+
+const TPL_DEFS = {
+  eu: {
+    zh: `邮件主题：【供应链合规投诉】关于贵司供应商{{company}}劳工权益问题的尽职调查请求
+
+尊敬的贵司合规与可持续发展部门：
+
+我是贵司供应商{{company}}（下称"该供应商"）的（前）员工{{name}}。现向贵司正式反映该供应商在用工过程中存在的严重违规行为，并依据欧盟《企业可持续发展尽职调查指令》（CSDDD，Directive (EU) 2024/1760）及贵司《供应商行为准则》相关条款，请求贵司对该供应商启动供应链尽职调查。
+
+一、涉事供应商基本信息
+公司名称：{{company}}
+统一社会信用代码：{{creditCode}}
+注册地址：{{address}}
+
+二、反映的违规事实
+1. {{violation}}；
+2. {{detail}}；
+3. {{evidence}}。
+
+三、请求事项
+1. 依据 CSDDD 及贵司供应链合规政策，对上述事实启动尽职调查；
+2. 要求该供应商限期整改并反馈处理结果；
+3. 如调查属实，请依据贵司供应商管理制度采取相应商业措施。
+
+四、附件
+1. 劳动合同及解除/调岗通知（如有）；
+2. 工资流水、考勤记录；
+3. 聊天记录、录音等证据材料（可另行提供）。
+
+本人承诺以上反映内容属实，愿配合贵司调查并提供进一步证据。盼复！
+
+此致
+{{name}}　联系电话：{{phone}}　邮箱：{{email}}
+日期：{{date}}`,
+    en: `Subject: Supply Chain Due Diligence Request — Alleged Labor Rights Violations at Your Supplier {{company}}
+
+Dear Compliance & Sustainability Team,
+
+I am a (former) employee of {{company}} ("the Supplier"), which I understand is part of your supply chain. I am writing to formally request that you investigate the alleged labor-law violations described below, in accordance with the EU Corporate Sustainability Due Diligence Directive (CSDDD, Directive (EU) 2024/1760) and your Supplier Code of Conduct.
+
+1. Supplier details
+Company name: {{company}}
+Registration No.: {{creditCode}}
+Registered address: {{address}}
+
+2. Allegations
+- {{violation}};
+- {{detail}};
+- {{evidence}}.
+
+3. Actions requested
+- Launch a due diligence review of the above allegations under the CSDDD and your supply chain compliance framework;
+- Require the Supplier to take corrective action within a reasonable timeframe and report back on the outcome;
+- If the allegations are confirmed, apply the appropriate remedies under your supplier management policy.
+
+4. Supporting documents
+- Employment contract and any dismissal / reassignment notices;
+- Payroll statements and attendance records;
+- Chat records, audio recordings and other evidence (available on request).
+
+I confirm that the information set out above is accurate to the best of my knowledge, and I am available to cooperate fully with your investigation.
+
+Yours faithfully,
+{{name}}
+Tel: {{phone}}   Email: {{email}}
+Date: {{date}}`,
+    fields: [
+      { id: 'company', label: '公司名称', type: 'text', ph: '如：星宇股份', zh: '【公司名称】', en: '[Company Name]' },
+      { id: 'name', label: '投诉人姓名', type: 'text', ph: '您的姓名', zh: '【姓名】', en: '[Name]' },
+      { id: 'phone', label: '联系电话', type: 'text', ph: '如：138****8888', zh: '【电话】', en: '[Phone]' },
+      { id: 'email', label: '联系邮箱', type: 'text', ph: '接收回复的邮箱', zh: '【邮箱】', en: '[Email]' },
+      { id: 'creditCode', label: '统一社会信用代码', type: 'text', auto: true, ph: '如：91330XXXXXXXXXXX', zh: '【代码】', en: '[Registration No.]' },
+      { id: 'address', label: '注册地址', type: 'text', auto: true, ph: '营业执照上的地址', zh: '【地址】', en: '[Registered address]' },
+      { id: 'violation', label: '违规事实类型', type: 'select', ph: '请选择违规事实类型', options: VIOLATION_OPTS, zh: '【无故辞退 / 逼迫自离 / 违法调岗 / 拖欠工资 / 超时加班 / 未依法缴纳社保】', en: '[Unlawful dismissal / forced resignation / illegal job transfer / wage arrears / excessive overtime / non-payment of social insurance]' },
+      { id: 'detail', label: '具体经过（时间、地点、涉及人员）', type: 'textarea', ph: '请填写事件经过', zh: '【具体经过：时间、地点、涉及人员】', en: '[Detailed timeline and persons involved]' },
+      { id: 'evidence', label: '证据概况', type: 'textarea', ph: '如：劳动合同、工资流水、聊天记录、录音等', zh: '【证据概况：劳动合同、工资流水、聊天记录、录音等】', en: '[Overview of evidence: employment contract, payroll records, chat logs, recordings, etc.]' },
+      { id: 'date', label: '日期', type: 'date', zh: '【日期】', en: '[Date]' },
+    ],
+  },
+
+  domestic: {
+    zh: `【投诉标题】关于{{company}}违法用工行为的投诉
+
+尊敬的12333/12345平台工作人员：
+
+投诉人：{{name}}，身份证号：{{idcard}}，联系电话：{{phone}}
+被投诉单位：{{company}}，统一社会信用代码：{{creditCode}}，注册地址：{{address}}
+
+一、投诉事由
+本人于{{hireDate}}入职该公司，担任{{position}}。现该公司存在以下违法用工行为：
+1. {{violation}}；
+2. {{detail}}。
+
+二、请求事项
+1. 请劳动保障监察部门依法对该单位立案查处；
+2. 责令该单位{{request}}；
+3. 依法给予行政处罚并公示。
+
+三、证据材料
+劳动合同、工资银行流水、考勤记录、解除/调岗通知、微信/钉钉聊天记录、录音录像等（详见附件清单）。
+
+本人保证以上投诉内容属实，如有虚假愿承担相应法律责任。
+
+投诉人（签名）：{{name}}
+日期：{{date}}`,
+    fields: [
+      { id: 'company', label: '公司名称', type: 'text', ph: '被投诉单位全称', zh: '【公司名称】' },
+      { id: 'name', label: '投诉人姓名', type: 'text', ph: '您的姓名', zh: '【姓名】' },
+      { id: 'idcard', label: '身份证号', type: 'text', ph: '如：1101**********1234', zh: '【身份证号】' },
+      { id: 'phone', label: '联系电话', type: 'text', ph: '如：138****8888', zh: '【电话】' },
+      { id: 'creditCode', label: '统一社会信用代码', type: 'text', auto: true, ph: '如：91330XXXXXXXXXXX', zh: '【代码】' },
+      { id: 'address', label: '单位注册地址', type: 'text', auto: true, ph: '营业执照上的地址', zh: '【地址】' },
+      { id: 'hireDate', label: '入职时间', type: 'date', zh: '【入职时间】' },
+      { id: 'position', label: '岗位', type: 'text', ph: '如：销售专员', zh: '【岗位】' },
+      { id: 'violation', label: '违规事实类型', type: 'select', ph: '请选择违规事实类型', options: VIOLATION_OPTS, zh: '【无故辞退 / 逼迫自离 / 违法调岗 / 拖欠工资 / 未依法缴纳社保 / 超时加班】' },
+      { id: 'detail', label: '具体经过描述', type: 'textarea', ph: '请填写事件经过（时间、地点、经过）', zh: '【具体经过描述：时间、地点、经过】' },
+      { id: 'request', label: '请求事项', type: 'select', ph: '请选择请求事项', options: [{ id: 'compensation', zh: '支付经济补偿' }, { id: 'wages', zh: '补发工资' }, { id: 'reinstate', zh: '恢复劳动关系' }, { id: 'certificate', zh: '出具离职证明' }], zh: '【支付经济补偿 / 补发工资 / 恢复劳动关系 / 出具离职证明】' },
+      { id: 'date', label: '日期', type: 'date', zh: '【日期】' },
+    ],
+  },
+
+  arb: {
+    zh: `劳动仲裁申请书（要点模板）
+
+一、申请人
+姓名：{{name}}　性别：{{gender}}　身份证号：{{idcard}}
+住址：{{address}}　联系电话：{{phone}}
+
+二、被申请人
+公司全称：{{company}}　统一社会信用代码：{{creditCode}}
+住所地：{{regAddress}}　法定代表人：{{legalRep}}
+
+三、仲裁请求
+1. 请求裁决被申请人支付违法解除劳动合同赔偿金（2N）{{compAmount}}元；
+2. 请求裁决被申请人支付拖欠工资{{wageAmount}}元；
+3. 请求裁决被申请人支付未休年假工资{{leaveAmount}}元；
+4. 请求确认申请人与被申请人劳动关系存续期间为{{periodStart}}至{{periodEnd}}。
+
+四、事实与理由
+{{detail}}
+
+五、证据清单
+1. 劳动合同（证明劳动关系）；
+2. 工资银行流水（证明工资标准与拖欠）；
+3. 考勤记录（证明出勤）；
+4. 解除/调岗通知（证明违规处理）；
+5. 聊天记录、录音（证明施压与事实经过）。
+
+六、管辖与时效
+向{{arbPlace}}劳动人事争议仲裁委员会申请。
+注意：仲裁时效为劳动关系终止之日起一年内，请尽快提交。
+
+申请人（签名）：{{name}}
+日期：{{date}}`,
+    fields: [
+      { id: 'name', label: '申请人姓名', type: 'text', ph: '您的姓名', zh: '【姓名】' },
+      { id: 'gender', label: '性别', type: 'select', options: [{ id: 'male', zh: '男' }, { id: 'female', zh: '女' }], zh: '【性别】' },
+      { id: 'idcard', label: '身份证号', type: 'text', ph: '如：1101**********1234', zh: '【身份证号】' },
+      { id: 'address', label: '住址', type: 'text', zh: '【住址】' },
+      { id: 'phone', label: '联系电话', type: 'text', ph: '如：138****8888', zh: '【电话】' },
+      { id: 'company', label: '公司全称', type: 'text', zh: '【公司名称】' },
+      { id: 'creditCode', label: '统一社会信用代码', type: 'text', auto: true, zh: '【代码】' },
+      { id: 'regAddress', label: '单位住所地', type: 'text', auto: true, zh: '【地址】' },
+      { id: 'legalRep', label: '法定代表人', type: 'text', zh: '【法定代表人】' },
+      { id: 'compAmount', label: '违法解除赔偿金（元）', type: 'text', ph: '按 2N 计算', zh: '【金额】' },
+      { id: 'wageAmount', label: '拖欠工资（元）', type: 'text', zh: '【金额】' },
+      { id: 'leaveAmount', label: '未休年假工资（元）', type: 'text', zh: '【金额】' },
+      { id: 'periodStart', label: '劳动关系起始日', type: 'date', zh: '【起始】' },
+      { id: 'periodEnd', label: '劳动关系终止日', type: 'date', zh: '【终止】' },
+      { id: 'detail', label: '事实与理由', type: 'textarea', ph: '按时间线描述：入职时间、岗位、工资标准、违规经过、沟通协商过程', zh: '【按时间线描述：入职时间、岗位、工资标准、用工违规行为经过（辞退/逼迫自离/调岗/欠薪等）、沟通与协商过程。】' },
+      { id: 'arbPlace', label: '申请仲裁地', type: 'text', ph: '如：劳动合同履行地', zh: '【劳动合同履行地 / 用人单位所在地】' },
+      { id: 'date', label: '日期', type: 'date', zh: '【日期】' },
+    ],
+  },
+};
+
+/* ============================================================
+ * 交互逻辑
+ * ============================================================ */
+const input = document.getElementById('companyInput');
+const searchBtn = document.getElementById('searchBtn');
+const PLACEHOLDER_HTML = document.getElementById('placeholderCard').outerHTML;
+
+function resetQuery() {
+  input.value = '';
+  input.focus();
+  document.getElementById('result').innerHTML = PLACEHOLDER_HTML;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startSearch() {
+  const name = input.value.trim();
+  if (!name) { input.focus(); input.style.borderColor = '#dc2626'; setTimeout(() => input.style.borderColor = '', 1200); return; }
+  runAnalysis(name);
+}
+
+searchBtn.addEventListener('click', startSearch);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') startSearch(); });
+document.querySelectorAll('.demo-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    input.value = btn.dataset.demo;
+    startSearch();
+  });
+});
+
+/* ---------- 复制 ---------- */
+function copyText(text, btn) {
+  const done = () => {
+    if (!btn) return;
+    const old = btn.textContent;
+    btn.textContent = '✓ 已复制';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  done();
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  if (btn.dataset.copy) copyText(btn.dataset.copy, btn);
+});
+
+/* ---------- 模板切换与复制 ---------- */
+function switchTab(tab) {
+  const wrap = tab.closest('.tpl-wrap');
+  if (!wrap) return;
+  const key = tab.dataset.tpl;
+  const lang = tab.dataset.lang || '';
+  wrap.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+  const formBox = wrap.querySelector('.form-box');
+  if (formBox && formBox.dataset.tpl !== key) {
+    formBox.dataset.tpl = key;
+    formBox.innerHTML = renderForm(key);
+  }
+  wrap.querySelectorAll('pre').forEach(p => {
+    p.style.display = (p.dataset.tpl === key && (p.dataset.lang || '') === lang) ? '' : 'none';
+  });
+}
+
+/* ---------- 模板填写表单：填写后实时同步到模板，填完直接复制 ---------- */
+const tplState = {};
+let currentCompany = '';
+let lastBizCompany = '';
+
+/* ---------- 工商信息自动获取（正式产品由后端对接公开工商数据源） ---------- */
+function getBizInfo(name) {
+  const info = MOCK_COMPANIES[name];
+  if (info && info.creditCode) return { creditCode: info.creditCode, address: info.address };
+  return null;
+}
+
+function setBizFields(creditCode, address) {
+  tplState.eu.creditCode = creditCode;
+  tplState.eu.address = address;
+  tplState.domestic.creditCode = creditCode;
+  tplState.domestic.address = address;
+  tplState.arb.creditCode = creditCode;
+  tplState.arb.regAddress = address;
+  ['eu', 'domestic', 'arb'].forEach(k => updateTpl(k));
+}
+
+function renderBizBar() {
+  const el = document.getElementById('bizBar');
+  if (!el) return;
+  const cc = (tplState.eu && tplState.eu.creditCode) || '';
+  const addr = (tplState.eu && tplState.eu.address) || '';
+  const got = !!(cc || addr);
+  el.innerHTML = `
+    <div class="biz-bar">
+      <div class="biz-line">
+        <span>${got ? '🏢 已自动获取工商信息（公开数据源）' : '⚠️ 未检索到该企业公开工商信息，可手动补充'}</span>
+        <span>统一社会信用代码：<b>${escapeHtml(cc) || '未获取到'}</b></span>
+        <span>注册地址：<b>${escapeHtml(addr) || '未获取到'}</b></span>
+        <button class="btn-ghost" onclick="toggleBizEdit()">✏️ 修改</button>
+      </div>
+      <div class="biz-edit" id="bizEdit" style="display:none">
+        <input id="bizCc" placeholder="统一社会信用代码（留空则模板中保留占位符）" value="${escapeHtml(cc)}">
+        <input id="bizAddr" placeholder="注册地址（留空则模板中保留占位符）" value="${escapeHtml(addr)}">
+        <button class="copy-btn" onclick="saveBizEdit()">保存</button>
+        <button class="btn-ghost" onclick="toggleBizEdit()">取消</button>
+      </div>
+    </div>`;
+}
+
+function toggleBizEdit() {
+  const box = document.getElementById('bizEdit');
+  if (box) box.style.display = box.style.display === 'none' ? '' : 'none';
+}
+
+function saveBizEdit() {
+  const cc = document.getElementById('bizCc').value;
+  const addr = document.getElementById('bizAddr').value;
+  setBizFields(cc.trim(), addr.trim());
+  renderBizBar();
+}
+
+function tplSectionHtml(tabs, initialKey) {
+  const tabsHtml = tabs.map((t, i) =>
+    `<div class="tab ${i === 0 ? 'active' : ''}" data-tpl="${t.key}" data-lang="${t.lang || ''}" onclick="switchTab(this)">${t.label}</div>`
+  ).join('');
+  const pres = tabs.map(t =>
+    `<pre data-tpl="${t.key}" data-lang="${t.lang || ''}"${t === tabs[0] ? '' : ' style="display:none"'}></pre>`
+  ).join('');
+  return `<div class="tpl-wrap" data-form="${initialKey}">
+    <div class="tabs">${tabsHtml}</div>
+    <div class="form-box" data-tpl="${initialKey}"></div>
+    <div class="tpl-box">
+      <button class="copy-btn tpl-copy" onclick="copyTpl(this)">复制当前模板</button>
+      ${pres}
+    </div>
+  </div>`;
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function initTplState() {
+  Object.keys(TPL_DEFS).forEach(k => {
+    if (!tplState[k]) {
+      tplState[k] = {};
+      TPL_DEFS[k].fields.forEach(f => {
+        if (f.type === 'date') tplState[k][f.id] = todayStr();
+      });
+    }
+  });
+}
+
+function renderForm(key) {
+  const def = TPL_DEFS[key];
+  const vals = tplState[key] || {};
+  const rows = def.fields.filter(f => !f.auto).map(f => {
+    const v = escapeHtml(vals[f.id] || '');
+    let ctrl;
+    if (f.type === 'textarea') {
+      ctrl = `<textarea data-fid="${f.id}" rows="3" placeholder="${f.ph || ''}">${v}</textarea>`;
+    } else if (f.type === 'select') {
+      const opts = (f.options || []).map(o => {
+        const oid = typeof o === 'object' ? o.id : o;
+        const olabel = typeof o === 'object' ? (o.en ? o.zh + '（' + o.en + '）' : o.zh) : o;
+        return `<option value="${oid}"${vals[f.id] === oid ? ' selected' : ''}>${olabel}</option>`;
+      }).join('');
+      ctrl = `<select data-fid="${f.id}"><option value="">${f.ph || '请选择'}</option>${opts}</select>`;
+    } else {
+      ctrl = `<input type="${f.type === 'date' ? 'date' : 'text'}" data-fid="${f.id}" placeholder="${f.ph || ''}" value="${v}">`;
+    }
+    return `<div class="fld"><label>${f.label}</label>${ctrl}</div>`;
+  }).join('');
+  return `<div class="form-head">📝 填写以下信息，模板将自动同步更新，填完直接复制即可<span style="color:#6b7280;font-weight:400">（工商信息已自动获取；如需英文版完整展示，具体经过、证据概况请用英文填写）</span></div>
+    <div class="form-grid">${rows}</div>
+    <div class="form-reset"><button class="btn-ghost" onclick="resetTplForm('${key}')">↺ 重置本表单</button></div>`;
+}
+
+function initTplSections() {
+  initTplState();
+  document.querySelectorAll('.tpl-wrap').forEach(wrap => {
+    const key = wrap.dataset.form;
+    const formBox = wrap.querySelector('.form-box');
+    if (formBox) { formBox.dataset.tpl = key; formBox.innerHTML = renderForm(key); }
+    Object.keys(TPL_DEFS).forEach(k => updateTpl(k));
+  });
+  renderBizBar();
+}
+
+function updateTpl(key) {
+  const def = TPL_DEFS[key];
+  const vals = tplState[key] || {};
+  ['zh', 'en'].forEach(lang => {
+    if (!def[lang]) return;
+    let text = def[lang];
+    def.fields.forEach(f => {
+      const v = (vals[f.id] || '').trim();
+      if (!v) { text = text.split('{{' + f.id + '}}').join(f[lang] || ''); return; }
+      let r = v;
+      if (f.type === 'select') {
+        const opt = (f.options || []).find(o => (typeof o === 'object' ? o.id : o) === v);
+        if (opt) r = typeof opt === 'object' ? (opt[lang] || opt.zh || v) : opt;
+      }
+      text = text.split('{{' + f.id + '}}').join(r);
+    });
+    document.querySelectorAll(`pre[data-tpl="${key}"][data-lang="${lang}"]`).forEach(p => { p.textContent = text; });
+  });
+}
+
+function resetTplForm(key) {
+  tplState[key] = {};
+  initTplState();
+  const biz = getBizInfo(currentCompany);
+  setBizFields(biz ? biz.creditCode : '', biz ? biz.address : '');
+  const box = document.querySelector(`.form-box[data-tpl="${key}"]`);
+  if (box) box.innerHTML = renderForm(key);
+  updateTpl(key);
+  renderBizBar();
+}
+
+/* 表单输入 → 实时同步模板 */
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-fid]');
+  if (!el) return;
+  const box = el.closest('.form-box');
+  if (!box) return;
+  const key = box.dataset.tpl;
+  tplState[key][el.dataset.fid] = el.value;
+  updateTpl(key);
+});
+document.addEventListener('change', e => {
+  const el = e.target.closest('[data-fid]');
+  if (!el) return;
+  const box = el.closest('.form-box');
+  if (!box) return;
+  tplState[box.dataset.tpl][el.dataset.fid] = el.value;
+  updateTpl(box.dataset.tpl);
+});
+
+function copyTpl(btn) {
+  const box = btn.closest('.tpl-box');
+  const visible = Array.from(box.querySelectorAll('pre')).find(p => p.style.display !== 'none');
+  copyText(visible ? visible.textContent : box.querySelector('pre').textContent, btn);
+}
+
+/* ---------- 证据清单 ---------- */
+function toggleEv(li) {
+  li.classList.toggle('checked');
+  const cb = li.querySelector('input');
+  cb.checked = !cb.checked;
+  updateEvCount(li.closest('ul'));
+}
+
+function toggleAll(check) {
+  const list = document.querySelector('#result .ev-list');
+  if (!list) return;
+  list.querySelectorAll('li').forEach(li => {
+    li.classList.toggle('checked', check);
+    li.querySelector('input').checked = check;
+  });
+  updateEvCount(list);
+}
+
+function updateEvCount(list) {
+  if (!list) return;
+  const n = list.querySelectorAll('li.checked').length;
+  const id = list.id === 'evListA' ? 'evCountA' : 'evCountB';
+  const el = document.getElementById(id);
+  if (el) el.textContent = n;
+}
+
+function copyEvList(listId) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+  const items = Array.from(list.querySelectorAll('li.checked'))
+    .map(li => '☑ ' + li.querySelector('span').textContent)
+    .join('\n');
+  const text = items || '（未勾选任何证据项）';
+  const btn = document.querySelector(`[onclick="copyEvList('${listId}')"]`);
+  copyText(text, btn);
+}
+</script>
+</body>
+</html>

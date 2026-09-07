@@ -1,0 +1,14 @@
+{
+  "name": "fulcrum-backend",
+  "version": "1.0.0",
+  "description": "支点 Fulcrum · 供应链维权智能查询工具 · 后端 API（零依赖，Node 内置模块）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

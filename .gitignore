@@ -1,0 +1,11 @@
+# 运行时数据与本地环境（不上传）
+.workbuddy/
+backend/data/cache.json
+node_modules/
+.env
+.env.*
+*.log
+
+# 系统文件
+.DS_Store
+Thumbs.db

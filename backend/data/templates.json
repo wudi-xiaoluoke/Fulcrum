@@ -1,0 +1,72 @@
+{
+  "violationOptions": [
+    { "id": "dismissal", "zh": "无故辞退", "en": "Unlawful dismissal" },
+    { "id": "forced", "zh": "逼迫自离", "en": "Forced resignation" },
+    { "id": "transfer", "zh": "违法调岗", "en": "Illegal job transfer" },
+    { "id": "wage", "zh": "拖欠工资", "en": "Wage arrears" },
+    { "id": "overtime", "zh": "超时加班", "en": "Excessive overtime" },
+    { "id": "social", "zh": "未依法缴纳社保", "en": "Non-payment of social insurance" }
+  ],
+  "templates": {
+    "eu": {
+      "zh": "邮件主题：【供应链合规投诉】关于贵司供应商{{company}}劳工权益问题的尽职调查请求\n\n尊敬的贵司合规与可持续发展部门：\n\n我是贵司供应商{{company}}（下称\"该供应商\"）的（前）员工{{name}}。现向贵司正式反映该供应商在用工过程中存在的严重违规行为，并依据欧盟《企业可持续发展尽职调查指令》（CSDDD，Directive (EU) 2024/1760）及贵司《供应商行为准则》相关条款，请求贵司对该供应商启动供应链尽职调查。\n\n一、涉事供应商基本信息\n公司名称：{{company}}\n统一社会信用代码：{{creditCode}}\n注册地址：{{address}}\n\n二、反映的违规事实\n1. {{violation}}；\n2. {{detail}}；\n3. {{evidence}}。\n\n三、请求事项\n1. 依据 CSDDD 及贵司供应链合规政策，对上述事实启动尽职调查；\n2. 要求该供应商限期整改并反馈处理结果；\n3. 如调查属实，请依据贵司供应商管理制度采取相应商业措施。\n\n四、附件\n1. 劳动合同及解除/调岗通知（如有）；\n2. 工资流水、考勤记录；\n3. 聊天记录、录音等证据材料（可另行提供）。\n\n本人承诺以上反映内容属实，愿配合贵司调查并提供进一步证据。盼复！\n\n此致\n{{name}}　联系电话：{{phone}}　邮箱：{{email}}\n日期：{{date}}",
+      "en": "Subject: Supply Chain Due Diligence Request — Alleged Labor Rights Violations at Your Supplier {{company}}\n\nDear Compliance & Sustainability Team,\n\nI am a (former) employee of {{company}} (\"the Supplier\"), which I understand is part of your supply chain. I am writing to formally request that you investigate the alleged labor-law violations described below, in accordance with the EU Corporate Sustainability Due Diligence Directive (CSDDD, Directive (EU) 2024/1760) and your Supplier Code of Conduct.\n\n1. Supplier details\nCompany name: {{company}}\nRegistration No.: {{creditCode}}\nRegistered address: {{address}}\n\n2. Allegations\n- {{violation}};\n- {{detail}};\n- {{evidence}}.\n\n3. Actions requested\n- Launch a due diligence review of the above allegations under the CSDDD and your supply chain compliance framework;\n- Require the Supplier to take corrective action within a reasonable timeframe and report back on the outcome;\n- If the allegations are confirmed, apply the appropriate remedies under your supplier management policy.\n\n4. Supporting documents\n- Employment contract and any dismissal / reassignment notices;\n- Payroll statements and attendance records;\n- Chat records, audio recordings and other evidence (available on request).\n\nI confirm that the information set out above is accurate to the best of my knowledge, and I am available to cooperate fully with your investigation.\n\nYours faithfully,\n{{name}}\nTel: {{phone}}   Email: {{email}}\nDate: {{date}}",
+      "fields": [
+        { "id": "company", "label": "公司名称", "type": "text", "ph": "如：星宇股份", "zh": "【公司名称】", "en": "[Company Name]" },
+        { "id": "name", "label": "投诉人姓名", "type": "text", "ph": "您的姓名", "zh": "【姓名】", "en": "[Name]" },
+        { "id": "phone", "label": "联系电话", "type": "text", "ph": "如：138****8888", "zh": "【电话】", "en": "[Phone]" },
+        { "id": "email", "label": "联系邮箱", "type": "text", "ph": "接收回复的邮箱", "zh": "【邮箱】", "en": "[Email]" },
+        { "id": "creditCode", "label": "统一社会信用代码", "type": "text", "auto": true, "ph": "如：91330XXXXXXXXXXX", "zh": "【代码】", "en": "[Registration No.]" },
+        { "id": "address", "label": "注册地址", "type": "text", "auto": true, "ph": "营业执照上的地址", "zh": "【地址】", "en": "[Registered address]" },
+        { "id": "violation", "label": "违规事实类型", "type": "select", "ph": "请选择违规事实类型", "optionsRef": "violationOptions", "zh": "【无故辞退 / 逼迫自离 / 违法调岗 / 拖欠工资 / 超时加班 / 未依法缴纳社保】", "en": "[Unlawful dismissal / forced resignation / illegal job transfer / wage arrears / excessive overtime / non-payment of social insurance]" },
+        { "id": "detail", "label": "具体经过（时间、地点、涉及人员）", "type": "textarea", "ph": "请填写事件经过", "zh": "【具体经过：时间、地点、涉及人员】", "en": "[Detailed timeline and persons involved]" },
+        { "id": "evidence", "label": "证据概况", "type": "textarea", "ph": "如：劳动合同、工资流水、聊天记录、录音等", "zh": "【证据概况：劳动合同、工资流水、聊天记录、录音等】", "en": "[Overview of evidence: employment contract, payroll records, chat logs, recordings, etc.]" },
+        { "id": "date", "label": "日期", "type": "date", "zh": "【日期】", "en": "[Date]" }
+      ]
+    },
+    "domestic": {
+      "zh": "【投诉标题】关于{{company}}违法用工行为的投诉\n\n尊敬的12333/12345平台工作人员：\n\n投诉人：{{name}}，身份证号：{{idcard}}，联系电话：{{phone}}\n被投诉单位：{{company}}，统一社会信用代码：{{creditCode}}，注册地址：{{address}}\n\n一、投诉事由\n本人于{{hireDate}}入职该公司，担任{{position}}。现该公司存在以下违法用工行为：\n1. {{violation}}；\n2. {{detail}}。\n\n二、请求事项\n1. 请劳动保障监察部门依法对该单位立案查处；\n2. 责令该单位{{request}}；\n3. 依法给予行政处罚并公示。\n\n三、证据材料\n劳动合同、工资银行流水、考勤记录、解除/调岗通知、微信/钉钉聊天记录、录音录像等（详见附件清单）。\n\n本人保证以上投诉内容属实，如有虚假愿承担相应法律责任。\n\n投诉人（签名）：{{name}}\n日期：{{date}}",
+      "fields": [
+        { "id": "company", "label": "公司名称", "type": "text", "ph": "被投诉单位全称", "zh": "【公司名称】" },
+        { "id": "name", "label": "投诉人姓名", "type": "text", "ph": "您的姓名", "zh": "【姓名】" },
+        { "id": "idcard", "label": "身份证号", "type": "text", "ph": "如：1101**********1234", "zh": "【身份证号】" },
+        { "id": "phone", "label": "联系电话", "type": "text", "ph": "如：138****8888", "zh": "【电话】" },
+        { "id": "creditCode", "label": "统一社会信用代码", "type": "text", "auto": true, "ph": "如：91330XXXXXXXXXXX", "zh": "【代码】" },
+        { "id": "address", "label": "单位注册地址", "type": "text", "auto": true, "ph": "营业执照上的地址", "zh": "【地址】" },
+        { "id": "hireDate", "label": "入职时间", "type": "date", "zh": "【入职时间】" },
+        { "id": "position", "label": "岗位", "type": "text", "ph": "如：销售专员", "zh": "【岗位】" },
+        { "id": "violation", "label": "违规事实类型", "type": "select", "ph": "请选择违规事实类型", "optionsRef": "violationOptions", "zh": "【无故辞退 / 逼迫自离 / 违法调岗 / 拖欠工资 / 未依法缴纳社保 / 超时加班】" },
+        { "id": "detail", "label": "具体经过描述", "type": "textarea", "ph": "请填写事件经过（时间、地点、经过）", "zh": "【具体经过描述：时间、地点、经过】" },
+        { "id": "request", "label": "请求事项", "type": "select", "ph": "请选择请求事项", "options": [
+          { "id": "compensation", "zh": "支付经济补偿" },
+          { "id": "wages", "zh": "补发工资" },
+          { "id": "reinstate", "zh": "恢复劳动关系" },
+          { "id": "certificate", "zh": "出具离职证明" }
+        ], "zh": "【支付经济补偿 / 补发工资 / 恢复劳动关系 / 出具离职证明】" },
+        { "id": "date", "label": "日期", "type": "date", "zh": "【日期】" }
+      ]
+    },
+    "arb": {
+      "zh": "劳动仲裁申请书（要点模板）\n\n一、申请人\n姓名：{{name}}　性别：{{gender}}　身份证号：{{idcard}}\n住址：{{address}}　联系电话：{{phone}}\n\n二、被申请人\n公司全称：{{company}}　统一社会信用代码：{{creditCode}}\n住所地：{{regAddress}}　法定代表人：{{legalRep}}\n\n三、仲裁请求\n1. 请求裁决被申请人支付违法解除劳动合同赔偿金（2N）{{compAmount}}元；\n2. 请求裁决被申请人支付拖欠工资{{wageAmount}}元；\n3. 请求裁决被申请人支付未休年假工资{{leaveAmount}}元；\n4. 请求确认申请人与被申请人劳动关系存续期间为{{periodStart}}至{{periodEnd}}。\n\n四、事实与理由\n{{detail}}\n\n五、证据清单\n1. 劳动合同（证明劳动关系）；\n2. 工资银行流水（证明工资标准与拖欠）；\n3. 考勤记录（证明出勤）；\n4. 解除/调岗通知（证明违规处理）；\n5. 聊天记录、录音（证明施压与事实经过）。\n\n六、管辖与时效\n向{{arbPlace}}劳动人事争议仲裁委员会申请。\n注意：仲裁时效为劳动关系终止之日起一年内，请尽快提交。\n\n申请人（签名）：{{name}}\n日期：{{date}}",
+      "fields": [
+        { "id": "name", "label": "申请人姓名", "type": "text", "ph": "您的姓名", "zh": "【姓名】" },
+        { "id": "gender", "label": "性别", "type": "select", "options": [ { "id": "male", "zh": "男" }, { "id": "female", "zh": "女" } ], "zh": "【性别】" },
+        { "id": "idcard", "label": "身份证号", "type": "text", "ph": "如：1101**********1234", "zh": "【身份证号】" },
+        { "id": "address", "label": "住址", "type": "text", "zh": "【住址】" },
+        { "id": "phone", "label": "联系电话", "type": "text", "ph": "如：138****8888", "zh": "【电话】" },
+        { "id": "company", "label": "公司全称", "type": "text", "zh": "【公司名称】" },
+        { "id": "creditCode", "label": "统一社会信用代码", "type": "text", "auto": true, "zh": "【代码】" },
+        { "id": "regAddress", "label": "单位住所地", "type": "text", "auto": true, "zh": "【地址】" },
+        { "id": "legalRep", "label": "法定代表人", "type": "text", "zh": "【法定代表人】" },
+        { "id": "compAmount", "label": "违法解除赔偿金（元）", "type": "text", "ph": "按 2N 计算", "zh": "【金额】" },
+        { "id": "wageAmount", "label": "拖欠工资（元）", "type": "text", "zh": "【金额】" },
+        { "id": "leaveAmount", "label": "未休年假工资（元）", "type": "text", "zh": "【金额】" },
+        { "id": "periodStart", "label": "劳动关系起始日", "type": "date", "zh": "【起始】" },
+        { "id": "periodEnd", "label": "劳动关系终止日", "type": "date", "zh": "【终止】" },
+        { "id": "detail", "label": "事实与理由", "type": "textarea", "ph": "按时间线描述：入职时间、岗位、工资标准、违规经过、沟通协商过程", "zh": "【按时间线描述：入职时间、岗位、工资标准、用工违规行为经过（辞退/逼迫自离/调岗/欠薪等）、沟通与协商过程。】" },
+        { "id": "arbPlace", "label": "申请仲裁地", "type": "text", "ph": "如：劳动合同履行地", "zh": "【劳动合同履行地 / 用人单位所在地】" },
+        { "id": "date", "label": "日期", "type": "date", "zh": "【日期】" }
+      ]
+    }
+  }
+}

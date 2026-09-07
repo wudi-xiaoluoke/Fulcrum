@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "note": "海外品牌合规白名单库。email/channel 为 V1.0 预录入演示值，上线前需人工核验；verified=false 表示未核验。",
+  "updated_at": "2026-09-07",
+  "brands": [
+    { "name": "梅赛德斯-奔驰", "en": "Mercedes-Benz", "email": "compliance@mercedes-benz.com", "channel": "集团合规举报邮箱", "verified": false },
+    { "name": "大众汽车", "en": "Volkswagen", "email": "compliance@volkswagen.de", "channel": "合规与可持续发展部门", "verified": false },
+    { "name": "宝马", "en": "BMW", "email": "compliance@bmwgroup.com", "channel": "集团合规举报渠道", "verified": false },
+    { "name": "奥迪", "en": "Audi", "email": "compliance@audi.com", "channel": "合规举报邮箱", "verified": false },
+    { "name": "保时捷", "en": "Porsche", "email": "compliance@porsche.com", "channel": "集团合规举报渠道", "verified": false },
+    { "name": "西门子", "en": "Siemens", "email": "compliance.office@siemens.com", "channel": "全球合规办公室", "verified": false },
+    { "name": "博世", "en": "Bosch", "email": "compliance@bosch.com", "channel": "合规与诚信举报渠道", "verified": false },
+    { "name": "飞利浦", "en": "Philips", "email": "integrity@philips.com", "channel": "商业诚信举报渠道", "verified": false }
+  ]
+}
